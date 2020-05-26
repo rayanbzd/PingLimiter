@@ -1,0 +1,27 @@
+protection:
+  enable: true
+  #========================================================================================================================================
+  #  Exemple if refreshRate is set to 8, and limit to 3 >>
+  # - Response sended to the ip on ping will be limited if she ping the server more than 3 time in 8 seconds
+  # - If ip stop ping too fast, ip is removed from limits at next refresh (8 seconds), otherwise he stay limited until the next check
+  #========================================================================================================================================
+  refreshRate: 8 #Time in seconds to refresh limited addresses
+  limit: 3 #How many time an ip adress can ping the server before being limited
+  serverIconOnlyFirstTime: true # (Highly Recommended) Send the serverIcon only one time every refreshRate.
+limitedRespond:
+  motd: "&cPlease do not spam refresh !"
+  versionMessage: "&b&lServer&a&lName &8&l| &7%connecteds%&8/&7%maxPlayers%"
+message: # NOTE: Alert system work only if you have the permission pinglimiter.alert and if you enable it with /pinglimiter alert
+  limitBeforeAlert: 100 #How many ip addresses have to be limited before send notifications
+  titleAlert: "&cServer under DDOS attack"
+  subTitleAlert: "&e%numberIP% &7IP addresses was limiteds"
+  enableActionBar: false #Send an actionbar to players who have permission pinglimiter.alert when an ip was limted.
+  actionBar: "&6%IP% &rexceeded the ping limit"
+  noPermission: "&cYou don't have permission to use this command"
+  configReloaded: "&aThe configuration has been reloaded"
+  enabledNotifications: "&aDdos notifications enabled"
+  disabledNotifications: "&cDdos notifications disabled"
+consoleFilter: #Highly recommended to keep this enabled for prevent console spamming and limit cpu usage.
+  enable: true #May not work if an other bungee plugin have console filtrer system.
+  blacklist:
+    - "InitialHandler"

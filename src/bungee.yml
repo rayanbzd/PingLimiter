@@ -1,0 +1,4 @@
+name: PingLimiter
+version: 1.0.3
+author: Futurixel
+main: fr.futurixel.zencraft.proxy.pinglimiter.PingLimiter
