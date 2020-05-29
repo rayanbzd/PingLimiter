@@ -8,6 +8,16 @@ protection:
   refreshRate: 8 #Time in seconds to refresh limited addresses
   limit: 3 #How many time an ip adress can ping the server before being limited
   serverIconOnlyFirstTime: true # (Highly Recommended) Send the serverIcon only one time every refreshRate.
+  preventConnectByPing: false #Prevent connection if ip don't have ping the server (can prevent some bot connect)
+  preventConnectByPingMsg:
+    - "&cConnection blocked"
+    - "&ePlease don't use direct connect"
+    - "&eAdd our server in your server list before connecting"
+    - "§7Please refresh your server list before joining"
+  preventConnectBySpam: false #Prevent connection if ip have spammed refresh (can prevent some bot connect)
+  preventConnectBySpamMsg:
+    - "&cPlease do not spam refresh !"
+    - "&ePlease wait %seconds% seconds before connecting"
 limitedRespond:
   motd: "&cPlease do not spam refresh !"
   versionMessage: "&b&lServer&a&lName &8&l| &7%connecteds%&8/&7%maxPlayers%"

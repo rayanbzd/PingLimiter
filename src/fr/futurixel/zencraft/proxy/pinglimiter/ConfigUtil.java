@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,6 +25,10 @@ public class ConfigUtil {
 	private int limit;
 	private boolean protection;
 	private boolean serverIconOnlyFirstTime;
+	private boolean preventConnectByPing;
+	private List<String> preventConnectByPingMsg;
+	private boolean preventConnectBySpam;
+	private List<String> preventConnectBySpamMsg;
 	private String motd;
 	private String versionMessage;
 	private int limitBeforeAlert;
@@ -44,6 +50,7 @@ public class ConfigUtil {
 		}
 		main.map.clear();
 		main.blacklist.clear();
+		main.pinged.clear();
 		
 		if (!main.getDataFolder().exists()) {
             main.getDataFolder().mkdir();
@@ -88,19 +95,55 @@ public class ConfigUtil {
 		} else {
 			setServerIconOnlyFirstTime(configuration.getBoolean("protection.serverIconOnlyFirstTime"));
 		}
+
+		if (isntSet("protection.preventConnectByPing")) {
+			configuration.set("protection.preventConnectByPing", false);
+			setPreventConnectByPing(false);
+		} else {
+			setPreventConnectByPing(configuration.getBoolean("protection.preventConnectByPing"));
+		}
+
+		if(isntSet("protection.preventConnectByPingMsg")) {
+			configuration.set("protection.preventConnectByPingMsg", Arrays.asList("&cConnection blocked","&ePlease don't use direct connect","&eAdd our server in your server list before connecting","&7Please refresh your server list before joining"));
+			setPreventConnectByPingMsg(Arrays.asList("§cConnection blocked","§ePlease don't use direct connect","§eAdd our server in your server list before connecting","§7Please refresh your server list before joining"));
+		}else {
+			List<String> preventconnectmsgs = new ArrayList<>();
+			for(String s : configuration.getStringList("protection.preventConnectByPingMsg")){
+				preventconnectmsgs.add(s.replace("&","§"));
+			}
+			setPreventConnectByPingMsg(preventconnectmsgs);
+		}
+
+		if (isntSet("protection.preventConnectBySpam")) {
+			configuration.set("protection.preventConnectBySpam", false);
+			setPreventConnectBySpam(false);
+		} else {
+			setPreventConnectBySpam(configuration.getBoolean("protection.preventConnectBySpam"));
+		}
+
+		if(isntSet("protection.preventConnectBySpamMsg")) {
+			configuration.set("protection.preventConnectBySpamMsg", Arrays.asList("&cPlease do not spam refresh !","&ePlease wait %seconds% seconds before connecting"));
+			setPreventConnectBySpamMsg(Arrays.asList("§cPlease do not spam refresh !","§ePlease wait "+getRefresh()+" seconds before connecting"));
+		}else {
+			List<String> preventconnectmsgs = new ArrayList<>();
+			for(String s : configuration.getStringList("protection.preventConnectBySpamMsg")){
+				preventconnectmsgs.add(s.replace("&","§").replace("%seconds%",String.valueOf(getRefresh())));
+			}
+			setPreventConnectBySpamMsg(preventconnectmsgs);
+		}
 		
 		if(isntSet("limitedRespond.motd")) {
 			configuration.set("limitedRespond.motd", "&cPlease do not spam refresh !");
 			setMotd("§cPlease do not spam refresh !");
 		}else {
-			setMotd(configuration.getString("limitedRespond.motd").replace("&", "�"));
+			setMotd(configuration.getString("limitedRespond.motd").replace("&", "§"));
 		}
 		
 		if(isntSet("limitedRespond.versionMessage")) {
 			configuration.set("limitedRespond.versionMessage", "&b&lZen&a&lCraft &8&l| &7%connecteds%&8/&7%maxPlayers%");
 			setVersionMessage("§b§lZen§a§lCraft §8§l| §7%connecteds%§8/§7%maxPlayers%");
 		}else {
-			setVersionMessage(configuration.getString("limitedRespond.versionMessage").replace("&", "�"));
+			setVersionMessage(configuration.getString("limitedRespond.versionMessage").replace("&", "§"));
 		}
 		
 		if (isntSet("message.limitBeforeAlert")) {
@@ -114,14 +157,14 @@ public class ConfigUtil {
 			configuration.set("message.titleAlert", "&cServer under Ddos attack");
 			setTitleAlert("§cServer under Ddos attack");
 		}else {
-			setTitleAlert(configuration.getString("message.titleAlert").replace("&", "�"));
+			setTitleAlert(configuration.getString("message.titleAlert").replace("&", "§"));
 		}
 		
 		if(isntSet("message.subTitleAlert")) {
 			configuration.set("message.subTitleAlert", "&e%numberIP% &7IP addresses was limiteds");
 			setSubTitleAlert("§e%numberIP% §7IP addresses was limiteds");
 		}else {
-			setSubTitleAlert(configuration.getString("message.subTitleAlert").replace("&", "�"));
+			setSubTitleAlert(configuration.getString("message.subTitleAlert").replace("&", "§"));
 		}
 		
 		if(isntSet("message.enableActionBar")) {
@@ -135,35 +178,35 @@ public class ConfigUtil {
 			configuration.set("message.actionBar", "&6%IP% &rexceeded the ping limit");
 			setActionBar("§6%IP% §rexceeded the ping limit");
 		}else {
-			setActionBar(configuration.getString("message.actionBar").replace("&", "�"));
+			setActionBar(configuration.getString("message.actionBar").replace("&", "§"));
 		}
 		
 		if(isntSet("message.noPermission")) {
 			configuration.set("message.noPermission", "&cYou don't have permission to use this command");
 			setNoPermission("§cYou don't have permission to use this command");
 		}else {
-			setNoPermission(configuration.getString("message.noPermission").replace("&", "�"));
+			setNoPermission(configuration.getString("message.noPermission").replace("&", "§"));
 		}
 		
 		if(isntSet("message.configReloaded")) {
 			configuration.set("message.configReloaded", "&aThe configuration has been reloaded");
 			setConfigReloaded("§aThe configuration has been reloaded");
 		}else {
-			setConfigReloaded(configuration.getString("message.configReloaded").replace("&", "�"));
+			setConfigReloaded(configuration.getString("message.configReloaded").replace("&", "§"));
 		}
 		
 		if(isntSet("message.enabledNotifications")) {
 			configuration.set("message.enabledNotifications", "&aDdos notifications enabled");
 			setEnabledNotifications("§aDdos notifications enabled");
 		}else {
-			setEnabledNotifications(configuration.getString("message.enabledNotifications").replace("&", "�"));
+			setEnabledNotifications(configuration.getString("message.enabledNotifications").replace("&", "§"));
 		}
 		
 		if(isntSet("message.disabledNotifications")) {
 			configuration.set("message.disabledNotifications", "&cDdos notifications disabled");
 			setDisabledNotifications("§cDdos notifications disabled");
 		}else {
-			setDisabledNotifications(configuration.getString("message.disabledNotifications").replace("&", "�"));
+			setDisabledNotifications(configuration.getString("message.disabledNotifications").replace("&", "§"));
 		}
 		
 		if(isntSet("consoleFilter.enable")) {
@@ -221,6 +264,22 @@ public class ConfigUtil {
 		this.serverIconOnlyFirstTime = serverIconOnlyFirstTime;
 	}
 
+	public boolean isPreventConnectByPing() {
+		return preventConnectByPing;
+	}
+
+	public void setPreventConnectByPing(boolean preventConnectByPing) {
+		this.preventConnectByPing = preventConnectByPing;
+	}
+
+	public boolean isPreventConnectBySpam() {
+		return preventConnectBySpam;
+	}
+
+	public void setPreventConnectBySpam(boolean preventConnectBySpam) {
+		this.preventConnectBySpam = preventConnectBySpam;
+	}
+
 	public int getLimitBeforeAlert() {
 		return limitBeforeAlert;
 	}
@@ -275,6 +334,22 @@ public class ConfigUtil {
 
 	public void setMotd(String motd) {
 		this.motd = motd;
+	}
+
+	public List<String> getPreventConnectByPingMsg() {
+		return preventConnectByPingMsg;
+	}
+
+	public void setPreventConnectByPingMsg(List<String> preventConnectByPingMsg) {
+		this.preventConnectByPingMsg = preventConnectByPingMsg;
+	}
+
+	public List<String> getPreventConnectBySpamMsg() {
+		return preventConnectBySpamMsg;
+	}
+
+	public void setPreventConnectBySpamMsg(List<String> preventConnectBySpamMsg) {
+		this.preventConnectBySpamMsg = preventConnectBySpamMsg;
 	}
 
 	public String getVersionMessage() {

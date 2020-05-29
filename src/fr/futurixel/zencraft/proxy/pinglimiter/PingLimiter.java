@@ -16,6 +16,7 @@ import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -27,6 +28,7 @@ public class PingLimiter extends Plugin implements Listener{
 	
 	public Map<String, Integer> map = new HashMap<>();
 	public List<String> blacklist = new ArrayList<>();
+	public List<String> pinged = new ArrayList<>();
 	public List<ProxiedPlayer> notifications = new ArrayList<>();
 	public ScheduledTask mainTask;
 	public ConfigUtil config = new ConfigUtil(this);
@@ -65,6 +67,30 @@ public class PingLimiter extends Plugin implements Listener{
 		
 	}
 
+	@EventHandler
+	public void onPreLoginEvent(PreLoginEvent e){
+		String adress = e.getConnection().getAddress().getAddress().toString().replace("/", "");
+		if (config.isPreventConnectBySpam()) {
+			if(blacklist.contains(adress)) {
+				StringBuilder kickMsg = new StringBuilder();
+				for (String line : config.getPreventConnectBySpamMsg()) {
+					kickMsg.append("\n").append(line);
+				}
+				e.setCancelReason(TextComponent.fromLegacyText(kickMsg.toString()));
+				e.setCancelled(true);
+			}
+		}if(config.isPreventConnectByPing()){
+			if(!pinged.contains(adress)) {
+				StringBuilder kickMsg = new StringBuilder();
+				for (String line : config.getPreventConnectByPingMsg()) {
+					kickMsg.append("\n").append(line);
+				}
+				e.setCancelReason(TextComponent.fromLegacyText(kickMsg.toString()));
+				e.setCancelled(true);
+			}
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPingEvent(ProxyPingEvent e) {
@@ -76,6 +102,15 @@ public class PingLimiter extends Plugin implements Listener{
 						new Protocol(config.getVersionMessage().replace("%connecteds%", String.valueOf(getProxy().getOnlineCount())).replace("%maxPlayers%", String.valueOf(getMaxPlayers())), 1),
 						new Players(0, 0, null), config.getMotd(), ""));
 				return;
+			}
+
+			if(config.isPreventConnectByPing()) {
+				if (!pinged.contains(adress)) {
+					pinged.add(adress);
+					ProxyServer.getInstance().getScheduler().schedule(this, () -> {
+						pinged.remove(adress);
+					}, 15, TimeUnit.SECONDS);
+				}
 			}
 
 			if (map.containsKey(adress)) {

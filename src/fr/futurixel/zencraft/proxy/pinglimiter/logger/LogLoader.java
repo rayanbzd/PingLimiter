@@ -20,13 +20,13 @@ public class LogLoader {
 		if(main.config.isConsoleFilter()) {
 			if(isLog4J()) {
 				new Log4JFilter(main).loadFiltrer();
-				main.getLogger().log(Level.INFO, "§aLog4J found! Start log filtering...");
+				main.getLogger().log(Level.INFO, "Â§aLog4J found! Start log filtering...");
 			}else {
 				loadDefaultFilter();
-				main.getLogger().log(Level.WARNING, "§cLog4J was not found. §eEnabled default logger filter. Highly recommended to use WaterFall to reduce CPU Usage.");
+				main.getLogger().log(Level.WARNING, "Â§cLog4J was not found. Â§eEnabled default logger filter. Highly recommended to use WaterFall to reduce CPU Usage.");
 			}
 		}else {
-			main.getLogger().log(Level.WARNING, "§cConsole filters are disabled. It is strongly recommended to enable them in order to reduce spam in the console and CPU usage.");
+			main.getLogger().log(Level.WARNING, "Â§cConsole filters are disabled. It is strongly recommended to enable them in order to reduce spam in the console and CPU usage.");
 		}
 	}
 	
