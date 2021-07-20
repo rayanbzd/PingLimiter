@@ -1,37 +1,54 @@
 protection:
   enable: true
-  #========================================================================================================================================
-  #  Exemple if refreshRate is set to 8, and limit to 3 >>
-  # - Response sended to the ip on ping will be limited if she ping the server more than 3 time in 8 seconds
-  # - If ip stop ping too fast, ip is removed from limits at next refresh (8 seconds), otherwise he stay limited until the next check
-  #========================================================================================================================================
-  refreshRate: 8 #Time in seconds to refresh limited addresses
-  limit: 3 #How many time an ip adress can ping the server before being limited
-  serverIconOnlyFirstTime: true # (Highly Recommended) Send the serverIcon only one time every refreshRate.
-  preventConnectByPing: false #Prevent connection if ip don't have ping the server (can prevent some bot connect)
+#Time in seconds to refresh limited addresses
+  refreshRate: 8
+#How many times an IP address can ping the server before being limited
+  limit: 3
+
+# - If "refreshRate" is set to 8, and the "limit" is set to 3:
+# - Response sent to the IP on ping will be limited if it pings the server more than 3 times in 8 seconds.
+# - If the IP stops pinging too fast, it is removed from the limiter on the next refresh (8 seconds), otherwise it will stay limited until the next check.
+
+#Send the Server Icon only one time every refreshRate (Highly Recommended)
+  serverIconOnlyFirstTime: true
+
+#Prevent connection if the IP has not pinged the server (Can prevent bots from connecting)
+  preventConnectByPing: false
   preventConnectByPingMsg:
-    - "&cConnection blocked"
-    - "&ePlease don't use direct connect"
-    - "&eAdd our server in your server list before connecting"
-    - "§7Please refresh your server list before joining"
-  preventConnectBySpam: false #Prevent connection if ip have spammed refresh (can prevent some bot connect)
+  - '&4Connection blocked!'
+  - '&cPlease do not use direct connect.'
+  - '&eAdd the server in your server list before connecting!'
+  - '&aPlease refresh your server list before joining.'
+
+#Prevent connection if the IP has spammed refresh
+  preventConnectBySpam: false
   preventConnectBySpamMsg:
-    - "&cPlease do not spam refresh !"
-    - "&ePlease wait %seconds% seconds before connecting"
+  - '&4Please do not spam refresh!'
+  - '&cPlease wait %seconds% seconds before connecting.'
+
 limitedRespond:
-  motd: "&cPlease do not spam refresh !"
-  versionMessage: "&b&lServer&a&lName &8&l| &7%connecteds%&8/&7%maxPlayers%"
-message: # NOTE: Alert system work only if you have the permission pinglimiter.alert and if you enable it with /pinglimiter alert
-  limitBeforeAlert: 100 #How many ip addresses have to be limited before send notifications
-  titleAlert: "&cServer under DDOS attack"
-  subTitleAlert: "&e%numberIP% &7IP addresses was limiteds"
-  enableActionBar: false #Send an actionbar to players who have permission pinglimiter.alert when an ip was limted.
-  actionBar: "&6%IP% &rexceeded the ping limit"
-  noPermission: "&cYou don't have permission to use this command"
-  configReloaded: "&aThe configuration has been reloaded"
-  enabledNotifications: "&aDdos notifications enabled"
-  disabledNotifications: "&cDdos notifications disabled"
-consoleFilter: #Highly recommended to keep this enabled for prevent console spamming and limit cpu usage.
-  enable: true #May not work if an other bungee plugin have console filtrer system.
+  motd: '&4Please do not spam refresh!'
+  versionMessage: '&b&lServer&a&lName &8&l| &7%connecteds%&8/&7%maxPlayers%'
+
+#NOTE: Alert system will only work if you have the "pinglimiter.alert" permission and enabled with the "/pinglimiter alert" command.
+message:
+
+#How many ip addresses have to be limited before sending notifications
+  limitBeforeAlert: 100
+  titleAlert: '&4Server under DDoS attack!'
+  subTitleAlert: '&6&l%numberIP% &r&cIP addresses have been limited.'
+
+#Send an actionbar notification to players with the "pinglimiter.alert" permission when an IP is limited
+  enableActionBar: false
+  actionBar: '&6%IP% &r&cexceeded the ping limit!'
+  noPermission: '&cYou don''t have permission to use this command'
+  configReloaded: '&2The configuration has been reloaded!'
+  enabledNotifications: '&aDDoS notifications enabled!'
+  disabledNotifications: '&cDDoS notifications disabled.'
+
+#Highly recommended to keep this enabled to prevent console spamming and reduce CPU usage
+#May not work if another Bungee plugin has a console filtration system
+consoleFilter:
+  enable: true
   blacklist:
-    - "InitialHandler"
+  - InitialHandler
